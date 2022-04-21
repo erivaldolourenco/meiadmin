@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content%}
+
+{% for nfe in nfes %}
+<hr>
+ANO: {{nfe.ano}} - VALOR: {{nfe.valor}}
+{%endfor%}
+{% endblock %}

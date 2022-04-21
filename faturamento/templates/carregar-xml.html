@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content%}
+
+
+
+
+{% for nfe in xml %}
+<hr>
+{{nfe.numero}}<br>
+{{nfe.data_emissao}}<br>
+{{nfe.tomador}}<br>
+{{nfe.servico.descricao}}<br>
+{{nfe.servico.valor_servicos}}<br>
+{{nfe.servico.municipio_prestacao_servico}}<br>
+
+
+{%endfor%}
+
+{% endblock %}
