@@ -1,8 +1,29 @@
 {% extends "base.html" %}
 {% load static %}
+{% block nav%}
+{% include "nav.html" %}
+{% endblock %}
 {% block content%}
-
-{{clientes}}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">CNPJ</th>
+      <th scope="col">RAZAO SOCIAL</th>
+      <th scope="col">ENDERECO</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%for cliente in clientes %}
+    <tr>
+      <th scope="row">{{cliente.id}}</th>
+      <td>{{cliente.CNPJ}}</td>
+      <td>{{cliente.razao_social}}</td>
+      <td>{{cliente.endereco.bairro}}-{{cliente.endereco.cidade}}-{{cliente.endereco.estado}}</td>
+    </tr>
+  {%endfor%}
+  </tbody>
+</table>
 
 
 {% endblock %}

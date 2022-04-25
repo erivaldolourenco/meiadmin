@@ -1,20 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block nav%}
+{% include "nav.html" %}
+{% endblock %}
+
 {% block content%}
-
-
-
-
-{% for nfe in xml %}
-<hr>
-{{nfe.numero}}<br>
-{{nfe.data_emissao}}<br>
-{{nfe.tomador}}<br>
-{{nfe.servico.descricao}}<br>
-{{nfe.servico.valor_servicos}}<br>
-{{nfe.servico.municipio_prestacao_servico}}<br>
-
-
-{%endfor%}
-
+<h3>Enviar arquivo XML</h3>
+<form action="/faturamento/carregar-xml" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <div class="mb-3">
+        <label for="arquivoxml" class="form-label">Escolha o arquivo XML</label>
+        <input class="form-control" type="file" id="arquivoxml" name="arquivoxml">
+    </div>
+    <button type="submit" class="btn btn-primary">Enviar</button>
+</form>
 {% endblock %}

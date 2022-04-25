@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
+{% block nav%}
+{% include "nav.html" %}
+{% endblock %}
 {% block content%}
-
 {% for nfe in nfes %}
 <hr>
 ANO: {{nfe.ano}} - VALOR: {{nfe.valor}}

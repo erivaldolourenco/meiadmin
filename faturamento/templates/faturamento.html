@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav%}
+{% include "nav.html" %}
+{% endblock %}
+{% block content%}
+<form>
+    <select class="form-select" aria-label="Default select example">
+        {%for ano in anos%}
+        <option value="{{ano}}">{{ano}}</option>
+        {%endfor%}
+    </select>
+</form>
+<div class="card">
+    <h2>{{faturamento_ano}}</h2>
+</div>
+
+{% endblock %}

@@ -33,10 +33,12 @@ class LoadXML():
 
             # print(nfe.find('ns3:TomadorServico/ns3:IdentificacaoTomador/ns3:CpfCnpj/ns3:Cnpj', nsNfe).text)
             cliente = Cliente(
-                CNPJ=self.format_cnpj(nfe.find('ns3:TomadorServico/ns3:IdentificacaoTomador/ns3:CpfCnpj/ns3:Cnpj', nsNfe)),
+                CNPJ=self.nao_esta_nulo(
+                    nfe.find('ns3:TomadorServico/ns3:IdentificacaoTomador/ns3:CpfCnpj/ns3:Cnpj', nsNfe)),
                 razao_social=self.nao_esta_nulo(nfe.find('ns3:TomadorServico/ns3:RazaoSocial', nsNfe)),
                 endereco=endereco
             )
+            cliente = self.salvar_cliente(cliente)
 
             servico = Servico(
                 valor_servicos=float(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:ValorServicos', nsNfe))),
@@ -44,12 +46,16 @@ class LoadXML():
                 valor_iss=float(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:ValorIss', nsNfe))),
                 base_calculo=float(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:BaseCalculo', nsNfe))),
                 aliquota=float(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:Aliquota', nsNfe))),
-                valor_liquido_nfse=float(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:ValorLiquidoNfse', nsNfe))),
-                valor_iss_retido=float(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:ValorIssRetido', nsNfe))),
+                valor_liquido_nfse=float(
+                    self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:ValorLiquidoNfse', nsNfe))),
+                valor_iss_retido=float(
+                    self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Valores/ns3:ValorIssRetido', nsNfe))),
                 item_lista_servico=int(self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:ItemListaServico', nsNfe))),
-                codigo_tributacao_municipio=self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:CodigoTributacaoMunicipio', nsNfe)),
+                codigo_tributacao_municipio=self.nao_esta_nulo(
+                    nfe.find('ns3:Servico/ns3:CodigoTributacaoMunicipio', nsNfe)),
                 descricao=self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:Discriminacao', nsNfe)),
-                municipio_prestacao_servico=self.nao_esta_nulo(nfe.find('ns3:Servico/ns3:MunicipioPrestacaoServico', nsNfe)),
+                municipio_prestacao_servico=self.nao_esta_nulo(
+                    nfe.find('ns3:Servico/ns3:MunicipioPrestacaoServico', nsNfe)),
             )
 
             nfe = NFE(
@@ -61,23 +67,16 @@ class LoadXML():
                 optante_simples_nacional=int(self.nao_esta_nulo(nfe.find('ns3:OptanteSimplesNacional', nsNfe))),
                 incetivador_cultural=int(self.nao_esta_nulo(nfe.find('ns3:IncetivadorCultural', nsNfe))),
                 competencia=self.nao_esta_nulo(nfe.find('ns3:Competencia', nsNfe)),
-                tomador=cliente,
+                cliente=cliente,
                 servico=servico
             )
+            self.salvar_nfe(nfe)
             # print("==========================")
             # print(nfe)
             # print("==========================")
 
-
             nfes.append(nfe)
         return nfes
-
-    def format_cnpj(self, cnpj_t):
-        try:
-            cnpj = cnpj_t.text
-            return f'{cnpj[:2]}.{cnpj[2:5]}.{cnpj[5:8]}/{cnpj[8:12]}-{cnpj[12:14]}'
-        except:
-            return ""
 
     def format_data(self, data):
         return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S')
@@ -87,3 +86,18 @@ class LoadXML():
             return object.text
         else:
             return ""
+
+    def salvar_cliente(self, cliente):
+        try:
+            return Cliente.objects.get(CNPJ=cliente.CNPJ)
+        except:
+            cliente.endereco.save()
+            return cliente.save()
+
+    def salvar_nfe(self, nfe):
+        try:
+            nfe.servico.save()
+            return nfe.save()
+        except:
+            return  nfe.servico.delete()
+
