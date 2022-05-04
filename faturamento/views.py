@@ -32,11 +32,6 @@ def faturamento(request):
         lucro =  Decimal(redimento_tributavel) - Decimal(despesas)
 
 
-    messages.add_message(
-        request, messages.SUCCESS, 
-        'Bem-vindo ',
-        fail_silently=True,
-            )
     template = loader.get_template('faturamento.html')
     context = {
         'lucro' : lucro,
