@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - MEI Admin</title>
+    <link href="{% static 'bib/bootstrap5/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'style.css' %}" rel="stylesheet"/>
+    <script src="{% static 'bib/bootstrap5/js/bootstrap.bundle.min.js' %}" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <form style="width: 22rem;">
+      <!-- Email input -->
+      <div class="form-outline mb-4">
+        <input type="email" id="usuario" name="usuario" class="form-control" />
+        <label class="form-label" for="usuario">Usuario</label>
+      </div>
+
+      <!-- Password input -->
+      <div class="form-outline mb-4">
+        <input type="password" id="senha" name="senha" class="form-control" />
+        <label class="form-label" for="senha">Senha</label>
+      </div>
+
+      <!-- 2 column grid layout for inline styling -->
+      <div class="row mb-4">
+        <div class="col d-flex justify-content-center">
+          <!-- Checkbox -->
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="lembrar" checked />
+            <label class="form-check-label" for="lembrar"> lembrar </label>
+          </div>
+        </div>
+      </div>
+      <!-- Submit button -->
+      <button type="button" class="btn btn-primary btn-block mb-4">Entrar</button>
+      <!-- Register buttons -->
+    </form>
+</body>
+</html>

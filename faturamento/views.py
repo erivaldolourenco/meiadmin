@@ -29,7 +29,7 @@ def faturamento(request):
         faturamento_ano = calcula_faturamento_anual(nfes)
         redimento_isento = faturamento_ano*32/100
         redimento_tributavel = faturamento_ano - redimento_isento
-        lucro =  redimento_tributavel - Decimal(despesas)
+        lucro =  Decimal(redimento_tributavel) - Decimal(despesas)
 
 
     messages.add_message(

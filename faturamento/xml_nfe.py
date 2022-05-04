@@ -179,7 +179,7 @@ class LoadXML():
 
     def salvar_cliente(self, cliente):
         try:
-            return Cliente.objects.get(CNPJ=cliente.CNPJ)
+            return Cliente.objects.get(CNPJ=cliente.cnpj)
         except:
             cliente.endereco.save()
             return cliente.save()
