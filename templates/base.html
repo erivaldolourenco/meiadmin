@@ -5,11 +5,23 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link href="{% static 'bib/bootstrap5/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'style.css' %}" rel="stylesheet"/>
     <script src="{% static 'bib/bootstrap5/js/bootstrap.bundle.min.js' %}" crossorigin="anonymous"></script>
 </head>
 <body>
 {% include "header.html" %}
 <div class="container">
+
+    {% block message%}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <strong>{{ message.tags |capfirst }}: </strong>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
 
     <div class="row">
         <div class="col-2">

@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block nav%}
-{% include "nav.html" %}
+{% include "nav-faturamento.html" %}
 {% endblock %}
 
 {% block content%}
 <h3>Enviar arquivo XML</h3>
-<form action="/faturamento/carregar-xml" method="post" enctype="multipart/form-data">{% csrf_token %}
+<form action="{% url 'carregar_xml' %}" method="post" enctype="multipart/form-data">{% csrf_token %}
     <div class="mb-3">
         <label for="arquivoxml" class="form-label">Escolha o arquivo XML</label>
-        <input class="form-control" type="file" id="arquivoxml" name="arquivoxml">
+        <input class="form-control" type="file" multiple id="arquivoxml" name="arquivoxml">
     </div>
     <button type="submit" class="btn btn-primary">Enviar</button>
 </form>

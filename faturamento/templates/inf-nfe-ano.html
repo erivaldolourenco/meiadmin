@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% block nav%}
-{% include "nav.html" %}
+{% include "nav-faturamento.html" %}
 {% endblock %}
 {% block content%}
+<h3>Faturamento Anual</h3>
 {% for nfe in nfes %}
 <hr>
 ANO: {{nfe.ano}} - VALOR: {{nfe.valor}}

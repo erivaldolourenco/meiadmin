@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav%}
+{% include "nav-faturamento.html" %}
+{% endblock %}
+{% block content%}
+<h3>Notas fiscais Eletronica</h3>
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">CLIENTE</th>
+        <th scope="col">CNPJ</th>
+        <th scope="col">VALOR</th>
+        <th scope="col">COMPETENCIA</th>
+        <th scope="col">DESCRICAO</th>
+      </tr>
+    </thead>
+    <tbody>
+    {%for nfe in nfes %}
+      <tr>
+        <th scope="row">{{nfe.numero}}</th>
+        <td>{{nfe.cliente}}</td>
+        <td>{{nfe.cliente.CNPJ}}</td>
+        <td>{{nfe.servico.valor_servicos}}</td>
+        <td>{{nfe.competencia}}</td>
+        <td>{{nfe.servico.descricao}}</td>
+        
+      </tr>
+    {%endfor%}
+    </tbody>
+  </table>
+
+{% endblock %}
