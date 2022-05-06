@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block nav%}
+{% include "nav-mei.html" %}
+{% endblock %}
+{% block content%}
+<h3>Despesas comprovadas</h3>
+<hr>
+<form action="{% url 'despesas_comprovadas' %}" method="post" enctype="multipart/form-data"> {% csrf_token %}
+    {{despesa_form}}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+</form>
+<hr>
+
+<table class="table">
+  <thead>
+      <th>nome</th>
+      <th>data</th>
+      <th>valor</th>
+  </thead>
+  <tbody>
+    {%for despesa in despesas%}
+    <tr>
+        <td>{{despesa.nome}}</td>
+        <td>{{despesa.data_pagamento}}</td>
+        <td>{{despesa.valor}}</td>
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+{% endblock %}

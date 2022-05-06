@@ -32,6 +32,7 @@ class DespesaComprovada(models.Model):
    valor = models.DecimalField(max_digits=6, decimal_places=2)
    arquivo = models.FileField(upload_to=path_file_media)
    upload_date = models.DateField(auto_now=True)
+   data_pagamento = models.DateField()
    mei = models.ForeignKey(Mei, on_delete=models.CASCADE)
 
    def __str__(self):

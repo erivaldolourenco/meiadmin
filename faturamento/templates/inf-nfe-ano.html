@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 {% block nav%}
 {% include "nav-faturamento.html" %}
 {% endblock %}
@@ -13,7 +14,7 @@
 <div class="card border-primary mb-3" style="max-width: 18rem;">
   <div class="card-header">{{faturamento.ano}}</div>
   <div class="card-body text-primary">
-    <h5 class="card-title">{{faturamento.valor}}</h5>
+    <h5 class="card-title">R$ {{faturamento.valor | intcomma}}</h5>
   </div>
 </div>
   </div>

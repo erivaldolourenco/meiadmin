@@ -21,20 +21,29 @@
       </div>
       <div class="card-body">
         <table class="table">
-            <tr>
-            <th>Faturamento</th>
-            <th>Redimento tributável</th>
-            <th>Redimento isento</th>
-            <th>Despesas comprovadas</th>
-            <th>Lucro</th>
-            </tr>
-            <tr>
-                <td>R$ {{faturamento_ano | intcomma}}</td>
-                <td>R$ {{redimento_tributavel | intcomma}}</td>
-                <td>R$ {{redimento_isento | intcomma }}</td>
-                <td>R$ {{ despesas_comprovadas | intcomma}}</td>
-                <td>R$ {{lucro | intcomma }}</td>
-            </tr>
+            <thead>
+                <th>Faturamento (FA)</th>
+                <th>Redimento isento (RI)</th>
+                <th>Redimento tributável (RT)</th>
+                <th>Despesas comprovadas (DC)</th>
+                <th>Lucro (L)</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>R$ {{faturamento_ano | intcomma}}</td>
+                    <td>R$ {{redimento_isento | intcomma }}</td>
+                    <td>R$ {{redimento_tributavel | intcomma}}</td>
+                    <td>R$ {{ despesas_comprovadas | intcomma}}</td>
+                    <td>R$ {{lucro | intcomma }}</td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <th>FA</th>
+                <th>FA*32%</th>
+                <th>FA-RI</th>
+                <th>DC</th>
+                <th>RT-DC</th>
+            </tfoot>
         </table>
       </div>
     

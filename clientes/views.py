@@ -9,7 +9,7 @@ from clientes.models import Cliente
 
 @login_required
 def clientes(request):
-    clientes = Cliente.objects.all()
+    clientes = Cliente.objects.all().filter(mei = request.user.responsavel.mei)
     template = loader.get_template('clientes.html')
     context = {
         'clientes': clientes,
