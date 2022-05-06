@@ -3,12 +3,13 @@ from datetime import datetime
 
 from faturamento.models import NFE, Servico
 from clientes.models import Cliente, Endereco
-
+from django.contrib import messages
 
 class LoadXML():
 
-    def __init__(self, xml):
+    def __init__(self, xml, request):
         self.xml = xml
+        self.request = request
 
     def obter_nfes(self):
         tree = ET.parse(self.xml)
@@ -44,11 +45,12 @@ class LoadXML():
 
             cliente_path = 'ns2:DeclaracaoPrestacaoServico/ns2:InfDeclaracaoPrestacaoServico/ns2:TomadorServico/'
             cliente = Cliente(
-                CNPJ=self.nao_esta_nulo(
+                cnpj=self.nao_esta_nulo(
                     nfe.find(cliente_path+'ns2:IdentificacaoTomador/ns2:CpfCnpj/ns2:Cnpj', nsNfe)),
                 razao_social=self.nao_esta_nulo(nfe.find(cliente_path+'ns2:RazaoSocial', nsNfe)),
                 endereco=endereco
             )
+            cliente.mei = self.request.user.responsavel.mei
             cliente = self.salvar_cliente(cliente)
 
             servico_path = 'ns2:DeclaracaoPrestacaoServico/ns2:InfDeclaracaoPrestacaoServico/ns2:Servico/'
@@ -76,6 +78,8 @@ class LoadXML():
             print(nfe.find(nfe_path+'ns2:RegimeEspecialTributacao', nsNfe).text)
             print("-------------------------")
 
+            mei = self.request.user.responsavel.mei
+
             nfe = NFE(
                 numero=int(self.nao_esta_nulo(nfe.find('ns2:Numero', nsNfe))),
                 codigo_verificacao=self.nao_esta_nulo(nfe.find('ns2:CodigoVerificacao', nsNfe)),
@@ -86,7 +90,8 @@ class LoadXML():
                 incetivador_cultural=int(self.nao_esta_nulo(nfe.find(nfe_path+'ns2:IncentivoFiscal', nsNfe))),
                 competencia=self.nao_esta_nulo(nfe.find(nfe_path+'ns2:Competencia', nsNfe)),
                 cliente=cliente,
-                servico=servico
+                servico=servico,
+                mei = mei
             )
             self.salvar_nfe(nfe)
             print("==========================")
@@ -120,11 +125,12 @@ class LoadXML():
 
             # print(nfe.find('ns3:TomadorServico/ns3:IdentificacaoTomador/ns3:CpfCnpj/ns3:Cnpj', nsNfe).text)
             cliente = Cliente(
-                CNPJ=self.nao_esta_nulo(
+                cnpj=self.nao_esta_nulo(
                     nfe.find('ns3:TomadorServico/ns3:IdentificacaoTomador/ns3:CpfCnpj/ns3:Cnpj', nsNfe)),
                 razao_social=self.nao_esta_nulo(nfe.find('ns3:TomadorServico/ns3:RazaoSocial', nsNfe)),
                 endereco=endereco
             )
+            cliente.mei = self.request.user.responsavel.mei
             cliente = self.salvar_cliente(cliente)
 
             servico = Servico(
@@ -144,7 +150,7 @@ class LoadXML():
                 municipio_prestacao_servico=self.nao_esta_nulo(
                     nfe.find('ns3:Servico/ns3:MunicipioPrestacaoServico', nsNfe)),
             )
-
+            mei =  self.request.user.responsavel.mei
             nfe = NFE(
                 numero=int(self.nao_esta_nulo(nfe.find('ns3:IdentificacaoNfse/ns3:Numero', nsNfe))),
                 codigo_verificacao=self.nao_esta_nulo(nfe.find('ns3:IdentificacaoNfse/ns3:CodigoVerificacao', nsNfe)),
@@ -155,7 +161,8 @@ class LoadXML():
                 incetivador_cultural=int(self.nao_esta_nulo(nfe.find('ns3:IncetivadorCultural', nsNfe))),
                 competencia=self.nao_esta_nulo(nfe.find('ns3:Competencia', nsNfe)),
                 cliente=cliente,
-                servico=servico
+                servico=servico,
+                mei=mei
             )
             self.salvar_nfe(nfe)
             # print("==========================")
@@ -179,17 +186,26 @@ class LoadXML():
 
     def salvar_cliente(self, cliente):
         try:
-            return Cliente.objects.get(CNPJ=cliente.cnpj)
+            return Cliente.objects.get(cnpj=cliente.cnpj)
         except:
             cliente.endereco.save()
-            return cliente.save()
+            cliente.save()
+            return Cliente.objects.get(id=cliente.id)
+
 
     def salvar_nfe(self, nfe):
         try:
-            return NFE.objects.get(numero= nfe.numero)
+            nfe = NFE.objects.get(numero=nfe.numero)
+            messages.add_message(
+                self.request, messages.INFO,
+                'Nota fiscal '+str(nfe.numero)+' já existe!',
+                fail_silently=True,
+            )
+            return nfe
         except NFE.DoesNotExist:
             nfe.servico.save()
-            return nfe.save()
-        except:
+            nfe.save()
+            return nfe
+        else:
             return  nfe.servico.delete()
 

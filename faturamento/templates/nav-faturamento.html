@@ -1,5 +1,6 @@
 <nav class="nav flex-column">
-  <a class="nav-link" href="carregar-xml">Carregar XML</a>
-  <a class="nav-link" href="nfes">Lista de NFEs</a>
-  <a class="nav-link" href="inf-nfe-ano">Relatorio Anos</a>
+  <a class="nav-link" href="{% url 'faturamento' %}">Faturamento</a>
+  <a class="nav-link" href="{% url 'carregar_xml' %}">Carregar XML</a>
+  <a class="nav-link" href="{% url 'nfes' %}">Lista de NFEs</a>
+  <a class="nav-link" href="{% url 'inf_nfe_ano' %}">Relatorio Anos</a>
 </nav>

@@ -1,73 +1,64 @@
 import datetime
 from decimal import Decimal
-import functools
-from unicodedata import decimal
+from functools import reduce
 from django.contrib import messages
 from django.http import HttpResponse
 from django.template import loader
 from faturamento.models import NFE
 from faturamento.xml_nfe import LoadXML
 from django.contrib.auth.decorators import login_required
-
+from datetime import datetime
 # Create your views here.
+from mei.models import DespesaComprovada
+
 
 @login_required
-def faturamento(request):
-   
-    if request.method == 'POST':
-        ano  = request.POST['ano']
-        despesas = request.POST['despesas']
-        nfes = NFE.objects.all().filter(data_emissao__range=[str(ano)+"-01-01", str(ano)+"-12-31"])
-        faturamento_ano = calcula_faturamento_anual(nfes)
-        redimento_isento = faturamento_ano*32/100
-        redimento_tributavel = faturamento_ano - redimento_isento
-        lucro =  redimento_tributavel - Decimal(despesas)
-    else:
-        despesas = 0
-        ano = datetime.datetime.now().year
-        nfes = NFE.objects.all().filter(data_emissao__range=[str(ano)+"-01-01", str(ano)+"-12-31"])
-        faturamento_ano = calcula_faturamento_anual(nfes)
-        redimento_isento = faturamento_ano*32/100
-        redimento_tributavel = faturamento_ano - redimento_isento
-        lucro =  Decimal(redimento_tributavel) - Decimal(despesas)
-
+def faturamento(request, ano=datetime.now().year):
+    nfes = NFE.objects.all().filter(mei=request.user.responsavel.mei)
+    despesas = DespesaComprovada.objects.all().filter(mei=request.user.responsavel.mei)
+    anos = sorted(list(set(map(lambda nfe: nfe.data_emissao.year, nfes))))
+    faturamento_ano = reduce(
+        lambda total, nfe: total + nfe.servico.valor_servicos,
+        filter(lambda nfe: nfe.data_emissao.year == int(ano), nfes),
+        Decimal(0)
+    )
+    despesas_comprovadas_ano = reduce(
+        lambda total, despesa: total + despesa.valor,
+        filter(lambda despesa: despesa.upload_date.year == int(ano), despesas),
+        Decimal(0)
+    )
+    redimento_isento = round(faturamento_ano * 32 / 100, 2)
+    redimento_tributavel = round(faturamento_ano - redimento_isento,2)
+    lucro = round(redimento_tributavel - Decimal(despesas_comprovadas_ano),2)
 
     template = loader.get_template('faturamento.html')
     context = {
+        'ano' : ano,
+        'anos' : anos,
         'lucro' : lucro,
+        'despesas_comprovadas': despesas_comprovadas_ano,
         'redimento_tributavel' : redimento_tributavel,
         'redimento_isento' : redimento_isento,
-        'ano' : ano,
-        'anos' : range(int(datetime.datetime.now().year)-7,int(datetime.datetime.now().year)+1),
-        'nfes' : nfes,
-        'faturamento_ano': faturamento_ano,
+        'faturamento_ano': round(faturamento_ano,2),
     }
     return HttpResponse(template.render(context, request))
 
-def calcula_faturamento_anual(nfes):
-    soma=0
-    for nfe in nfes:
-        soma = soma + nfe.servico.valor_servicos
-    return soma
 
 @login_required
 def inf_nfe_ano(request):
-    anos = ['2015', '2016', '2017', '2018', '2019', '2020', '2021','2022']
-    lista = []
+    nfes = NFE.objects.all().filter(mei = request.user.responsavel.mei)
+    anos = sorted(list(set(map(lambda nfe: nfe.data_emissao.year, nfes))))
+    faturamento_anos = []
     for ano in anos:
-        nfes = NFE.objects.all().filter(data_emissao__range=[ano + "-01-01", ano + "-12-31"])
-        soma = 0
-        for nfe in nfes:
-            soma += nfe.servico.valor_servicos
-        lista.append(
-            {
-                "ano": ano,
-                "valor": soma
-            }
+        valor_ano =  reduce(
+            lambda total, nfe: total + nfe.servico.valor_servicos,
+            filter(lambda nfe: nfe.data_emissao.year == ano, nfes),
+            Decimal(0)
         )
+        faturamento_anos.append({"ano": ano,"valor": valor_ano})
     template = loader.get_template('inf-nfe-ano.html')
     context = {
-        'nfes': lista,
+        'faturamento_anos': faturamento_anos,
     }
     return HttpResponse(template.render(context, request))
 
@@ -76,15 +67,13 @@ def carregar_xml(request):
     if request.method == 'POST':
         xmlfiles = request.FILES.getlist('arquivoxml')
         nfes=[]
-        for xmlfile in xmlfiles:      
-            nfes.append(LoadXML(xmlfile).obter_nfes())
-
+        for xmlfile in xmlfiles:
+            nfes.append(LoadXML(xmlfile, request).obter_nfes())
         messages.add_message(
-        request, messages.SUCCESS, 
-        'Nfes adicionada ao banco '+str(nfes),
-        fail_silently=True,
-            )
-
+            request, messages.SUCCESS,
+            'Foram adicionadas ' + str(nfes.__sizeof__()) + ' NFEs!',
+            fail_silently=True,
+        )
     template = loader.get_template('carregar-xml.html')
     context = {}
     return HttpResponse(template.render(context, request))
@@ -97,7 +86,7 @@ def links(request):
 
 @login_required
 def nfes(request):
-    nfes = NFE.objects.all()
+    nfes = NFE.objects.all().filter(mei = request.user.responsavel.mei)
     template = loader.get_template('nfes.html')
     context = {'nfes':nfes}
     return HttpResponse(template.render(context, request))

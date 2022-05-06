@@ -20,7 +20,7 @@ class Cliente(models.Model):
     cnpj  = models.CharField(max_length=50)
     razao_social  = models.CharField(max_length=200, null=True, blank=True)
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, null=True)
-    mei = models.OneToOneField(Mei, on_delete=models.CASCADE)
+    mei = models.ForeignKey(Mei, on_delete=models.CASCADE)
 
     def __str__(self):
         if self.razao_social is not None:

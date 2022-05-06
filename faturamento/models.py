@@ -32,7 +32,7 @@ class NFE(models.Model):
     competencia = models.CharField(max_length=50)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     servico = models.OneToOneField(Servico, on_delete=models.CASCADE)
-    mei = models.OneToOneField(Mei, on_delete=models.CASCADE)
+    mei = models.ForeignKey(Mei, on_delete=models.CASCADE)
 
     def __str__(self):
         return  str(self.numero)

@@ -32,7 +32,7 @@ class DespesaComprovada(models.Model):
    valor = models.DecimalField(max_digits=6, decimal_places=2)
    arquivo = models.FileField(upload_to=path_file_media)
    upload_date = models.DateField(auto_now=True)
-   mei = models.OneToOneField(Mei, on_delete=models.CASCADE)
+   mei = models.ForeignKey(Mei, on_delete=models.CASCADE)
 
    def __str__(self):
       return str(os.path.basename(self.arquivo.name))

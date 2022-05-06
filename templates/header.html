@@ -4,16 +4,16 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/">Inicio</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'home' %}">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/faturamento">Faturamento</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'faturamento' %}">Faturamento</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/clientes">Clientes</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'clientes' %}">Clientes</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="/links">Links</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'links' %}">Links</a>
                 </li>
             </ul>
         </div>
@@ -21,7 +21,7 @@
              <a class="navbar-brand">{{request.user.first_name}}</a>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="/logout">Sair</a>
+            <a class="nav-link" aria-current="page" href="{% url 'logout' %}">Sair</a>
             </li>
             </ul>
         </div>

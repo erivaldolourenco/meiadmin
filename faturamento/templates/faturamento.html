@@ -1,33 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
+{% load humanize %}
 {% block nav%}
 {% include "nav-faturamento.html" %}
 {% endblock %}
 {% block content%}
 <h3>Faturamento</h3>
-<form action="{% url 'faturamento' %}" method="post">{% csrf_token %}
+
+<div class="btn-group" role="group" aria-label="Basic outlined example">
+    {%for ano in anos%}
+    <a href="{% url 'faturamento' ano %}">
+        <button type="button" class="btn btn-outline-primary">{{ano}}</button></a>
+    {%endfor%}
+</div>
 
 
-
-    <div class="row g-3">
-        <div class="col">
-            <select class="form-select" aria-label="Default select example" name="ano">
-                {%for ano in anos%}
-                <option value="{{ano}}">{{ano}}</option>
-                {%endfor%}
-            </select>
-        </div>
-        <div class="col">
-            <input type="number" class="form-control" name="despesas" placeholder="Despesas Comprovadas" aria-label="Despesas" step="any" value="0">
-
-        </div>
-        <div class="col">
-            
-         <button type="submet" class="btn btn-info">Enviar</button>
-        </div>
-      </div>
-</form>
-<div class="container">
 <div class="card">
     <div class="card-header">
        <h3> {{ano}} </h3>
@@ -35,21 +22,23 @@
       <div class="card-body">
         <table class="table">
             <tr>
-            <th>FATURAMENTO</th>
-            <th>REDIMENTO TRIBUTAVEL</th>
-            <th>REDIMENTO ISENTO</th>
-            <th>LUCRO</th>
+            <th>Faturamento</th>
+            <th>Redimento tributável</th>
+            <th>Redimento isento</th>
+            <th>Despesas comprovadas</th>
+            <th>Lucro</th>
             </tr>
             <tr>
-                <td>{{faturamento_ano | floatformat:2}}</td>
-                <td>{{redimento_tributavel | floatformat:2}}</td>
-                <td>{{redimento_isento |floatformat:2 }}</td>
-                <td>{{lucro |floatformat:2 }}</td>
+                <td>R$ {{faturamento_ano | intcomma}}</td>
+                <td>R$ {{redimento_tributavel | intcomma}}</td>
+                <td>R$ {{redimento_isento | intcomma }}</td>
+                <td>R$ {{ despesas_comprovadas | intcomma}}</td>
+                <td>R$ {{lucro | intcomma }}</td>
             </tr>
         </table>
       </div>
     
 </div>
-</div>
+
 
 {% endblock %}
