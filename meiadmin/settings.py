@@ -33,7 +33,7 @@ DEBUG = eval(env("DEBUG"))
 if(DEBUG):
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = ['meiadmin.com.br']
+    ALLOWED_HOSTS = ['meiadmin.com.br','mei.acessonerd.com']
 
 
 # Application definition
