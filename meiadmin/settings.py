@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-&1q=k&0#=v^rqdow@hqd_*dw(t--41gq9&!rsmf9sw84tbq*y$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = eval(env("DEBUG"))
 
-if(DEBUG):
+if(not DEBUG):
     ALLOWED_HOSTS = ['*']
 else:
     ALLOWED_HOSTS = ['meiadmin.com.br','mei.acessonerd.com']
@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'meiadmin.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-if(DEBUG):
+if(not DEBUG):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
